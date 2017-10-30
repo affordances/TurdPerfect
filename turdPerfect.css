@@ -1,0 +1,32 @@
+html, body, div, canvas {
+    margin: 0;
+    padding: 0;
+}
+
+#pooplayer {
+  /*position: absolute;*/
+  left: 0;
+  top: 0;
+  cursor: none;
+  z-index: 0;
+}
+
+#flylayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  cursor: none;
+  z-index: 1;
+}
+
+#cursor {
+  width: 172px;
+  height: 264px;
+  position: absolute;
+  background-image: url("poop.png");
+  cursor: none;
+  z-index: 0;
+}
+
+/*tip [25, 241]*/
+/*middle [77, 128]*/
