@@ -1,6 +1,10 @@
 html, body, div, canvas {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  position: relative;
 }
 
 #pooplayer {
@@ -23,7 +27,7 @@ html, body, div, canvas {
   width: 172px;
   height: 264px;
   position: absolute;
-  background-image: url("poop.png");
+  background-image: url("img/poop.png");
   cursor: none;
   z-index: 0;
 }

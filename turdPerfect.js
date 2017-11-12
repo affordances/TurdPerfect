@@ -4,16 +4,21 @@ var flyLayer = document.getElementById("flylayer").getContext("2d");
 poopLayer.canvas.width = flyLayer.canvas.width = window.innerWidth;
 poopLayer.canvas.height = flyLayer.canvas.height = window.innerHeight;
 
-var isDrawing, cursor, counter = 1, poopArea = [], scrawl = [], currentMousePos = {};
+var isDrawing,
+    cursor,
+    counter = 1,
+    poopArea = [],
+    scrawl = [],
+    currentMousePos = {};
 
 document.addEventListener("mousemove", function(e) {
   currentMousePos.x = e.pageX;
   currentMousePos.y = e.pageY;
 });
 
-document.addEventListener("load", testLoop());
+document.addEventListener("load", newSession());
 
-function testLoop() {
+function newSession() {
   var session = new TurdPerfect();
   session.loop();
 };
@@ -21,45 +26,33 @@ function testLoop() {
 function TurdPerfect() {
 
   this.flyArray = [];
+  this.poop = new Poop();
+  this.cursor = document.getElementById("cursor");
 
   this.loop = function() {
     flyLayer.clearRect(0, 0, flyLayer.canvas.width, flyLayer.canvas.height);
 
-    var that = this;
-
-    cursor = cursor || document.getElementById("cursor");
-    cursor.style.left = currentMousePos.x - 25;
-    cursor.style.top = currentMousePos.y - 241;
+    this.cursor.style.left = currentMousePos.x - 25;
+    this.cursor.style.top = currentMousePos.y - 241;
 
     if (isDrawing) {
-      scrawl.push({
-        x: currentMousePos.x,
-        y: currentMousePos.y,
-        width: randomNumberInclusive(40, 50)
-      });
-      poopArea.push([currentMousePos.x, currentMousePos.y]);
+      this.poop.scrawl();
     };
 
     this.update();
 
+    var that = this;
     setTimeout(function() { that.loop() }, 50);
   };
 
   this.update = function() {
-    var poopExists = false;
-
-    if (poopExists === false) {
-      poop = new Poop();
-      poopExists = true;
-    };
-
     if (poopArea.length / 20 === counter && counter < 25) {
       this.flyArray.push(new Fly());
       counter += 1;
     };
 
     if (isDrawing) {
-      poop.render();
+      this.poop.render();
     };
 
     for (var i = 0; i < this.flyArray.length; i++) {
@@ -82,18 +75,22 @@ function Poop() {
 
   document.addEventListener("mousedown", function(e) {
     isDrawing = true;
-
-    scrawl.push({
-      x: currentMousePos.x,
-      y: currentMousePos.y,
-      width: randomNumberInclusive(40, 50)
-    });
+    this.scrawl();
   });
 
   document.addEventListener("mouseup", function() {
     isDrawing = false;
     scrawl = [];
   });
+
+  this.scrawl = function() {
+    scrawl.push({
+      x: currentMousePos.x,
+      y: currentMousePos.y,
+      width: randomNumberInclusive(40, 50)
+    });
+    poopArea.push([currentMousePos.x, currentMousePos.y]);
+  };
 
   this.render = function() {
     poopLayer.lineCap = "round";
@@ -113,7 +110,7 @@ function Poop() {
 function Fly() {
 
   var img = document.createElement("img");
-  img.src = "fly.png";
+  img.src = "img/fly.png";
   var flyW = 75;
   var flyH = 75;
 
@@ -153,18 +150,13 @@ function Fly() {
       this.state = this.randomState();
       this.duration = this.randomDuration();
       this.speed = this.randomSpeed();
-      this.index = (this.index + 1) % (this.state.length);
-      if (this.state === flying) {
-        this.flight();
-      };
-      this.duration -= 50;
-    } else {
-      this.index = (this.index + 1) % (this.state.length);
-      if (this.state === flying) {
-        this.flight();
-      };
-      this.duration -= 50;
+    }
+
+    this.index = (this.index + 1) % (this.state.length);
+    if (this.state === flying) {
+      this.flight();
     };
+    this.duration -= 50;
   };
 
   this.render = function() {
